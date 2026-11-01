@@ -1,0 +1,7 @@
+tools/
+.local/
+*.tfstate*
+.terraform/
+*.tfvars
+!*.tfvars.example
+evidence/*.txt
