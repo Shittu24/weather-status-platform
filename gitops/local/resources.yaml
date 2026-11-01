@@ -26,6 +26,8 @@ spec:
       labels:
         app: weather
     spec:
+      imagePullSecrets:
+        - name: ecr-pull
       automountServiceAccountToken: false
       securityContext:
         fsGroup: 10001
@@ -36,8 +38,8 @@ spec:
           type: RuntimeDefault
       containers:
         - name: weather
-          image: weather-status:phase2-local
-          imagePullPolicy: Never
+          image: 975049996360.dkr.ecr.us-east-1.amazonaws.com/weather-status@sha256:b073578c8d689edbe39c4f49119a126a59e60eaa37a4ae40f56ca359b814b1b1
+          imagePullPolicy: IfNotPresent
           ports:
             - name: http
               containerPort: 8000
