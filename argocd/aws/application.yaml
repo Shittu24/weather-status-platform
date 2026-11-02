@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: weather-aws
+  namespace: argocd
+spec:
+  project: weather
+  source:
+    repoURL: https://github.com/Shittu24/weather-status-platform.git
+    targetRevision: main
+    path: gitops/aws
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: weather-dev
+  # Manual sync initially. No automatic pruning or deletion finalizer.
+  syncPolicy:
+    syncOptions:
+      - FailOnSharedResource=true
