@@ -53,7 +53,7 @@ def main():
             if any(s.get("ready") for s in pod["status"].get("containerStatuses", [])):
                 raise AssertionError("Unassociated ServiceAccount unexpectedly read the secret")
             events = json.loads(kubectl("get", "events", "--field-selector",
-                                      f"involvedObject.name={denied_name}", "-o", "json"))
+                                      f"involvedObject.uid={pod['metadata']['uid']}", "-o", "json"))
             for event in events["items"]:
                 message = event.get("message", "")
                 if event.get("reason") == "FailedMount" and any(
