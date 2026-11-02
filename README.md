@@ -1,6 +1,6 @@
 # Weather Status platform: Kubernetes and GitOps
 
-Phase 2 runs the existing app in a single-node kind cluster on Docker Desktop. Two replicas demonstrate pod replacement, not node-level high availability. Phase 3 adds GitHub Actions, AWS ECR and Argo CD. The cluster is still local; EKS and Terraform are Phase 4.
+Phase 2 runs the existing app in a single-node kind cluster on Docker Desktop. Two replicas demonstrate pod replacement, not node-level high availability. Phase 3 adds GitHub Actions, AWS ECR and Argo CD. Phase 4 adds a disposable AWS EKS environment managed by Terraform; see [the AWS runbook](docs/phase4.md). The local kind cluster remains available independently.
 
 Phase 3 delivery and rollback exercises are verified; see [execution evidence](evidence/phase3.md). The base image has been refreshed and rescanned: 0 critical and 7 high findings remain. See [scan review](evidence/image-refresh.md) before any Phase 4 deployment.
 
