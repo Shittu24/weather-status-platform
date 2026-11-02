@@ -15,6 +15,8 @@ Terraform owns AWS resources. Argo CD owns the app's ServiceAccount, ConfigMap, 
 
 ## State and tool versions
 
+Run `python scripts/install-cloud-tools.py` from the platform root to install the pinned Windows binaries. AWS CLI, kubectl and Python must already be installed.
+
 Use the checksum-verified `tools/terraform.exe` 1.17.1, not the older system Terraform. AWS provider 6.71.0 is pinned, and provider lock files are committed. Helm is 4.3.1; Argo CD is 3.5.6.
 
 The persistent `terraform/bootstrap` root owns the private encrypted/versioned S3 bucket and imports the existing ECR repository. Both have prevent_destroy safeguards. ECR expires untagged images after 14 days and retains tagged releases. ECR will not expire a manifest while it is referenced by a manifest list.
