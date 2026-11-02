@@ -2,7 +2,7 @@
 
 Phase 2 runs the existing app in a single-node kind cluster on Docker Desktop. Two replicas demonstrate pod replacement, not node-level high availability. Phase 3 adds GitHub Actions, AWS ECR and Argo CD. The cluster is still local; EKS and Terraform are Phase 4.
 
-Phase 3 delivery and rollback exercises are verified; see [execution evidence](evidence/phase3.md). The image scan found critical/high vulnerabilities requiring base-image remediation before Phase 4 deployment.
+Phase 3 delivery and rollback exercises are verified; see [execution evidence](evidence/phase3.md). The base image has been refreshed and rescanned: 0 critical and 7 high findings remain. See [scan review](evidence/image-refresh.md) before any Phase 4 deployment.
 
 ## Phase 3: release through Git
 

@@ -38,7 +38,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: weather
-          image: 975049996360.dkr.ecr.us-east-1.amazonaws.com/weather-status@sha256:b073578c8d689edbe39c4f49119a126a59e60eaa37a4ae40f56ca359b814b1b1
+          image: 975049996360.dkr.ecr.us-east-1.amazonaws.com/weather-status@sha256:4446f0cbd78a757b6a691b37b4e91cc6a5feb018b72c3d8d8e36022d1e1b5aed
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
