@@ -31,3 +31,16 @@ Bootstrap also explicitly opts the CSI driver into `serviceAccountTokenInSecrets
 ## Scope and limitations
 
 This demonstrates a private AWS lab, workload identity, GitOps deployment, Terraform state handling and teardown. It does not demonstrate public HTTPS ingress, production availability, a vulnerability-free image, or an automated environment-approved Terraform apply workflow. Applies are reviewed saved plans executed locally; CI cannot provision AWS. The seven high image findings remain tracked separately.
+
+## Teardown verified November 2, 2026
+
+The reviewed destroy plan contained exactly 34 deletes and no S3/ECR resources. Terraform completed with **34 destroyed**, and the dev state list was empty. Independent AWS checks confirmed:
+
+- EKS cluster list empty.
+- Both recorded worker instances terminated.
+- Recorded NAT gateway status deleted.
+- Elastic IP allocation absent.
+- VPC absent.
+- Existing weather-status ECR repository retained; state bucket retained.
+
+The core Phase 4 completion gate is satisfied: provision, deploy, read a secret through workload identity, observe denied access, and safely tear down once. The local kind environment remains separate. Persistent S3/ECR storage can still incur small charges; the prior running interval is billable and is not erased by teardown.

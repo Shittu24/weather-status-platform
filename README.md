@@ -4,6 +4,10 @@ Phase 2 runs the existing app in a single-node kind cluster on Docker Desktop. T
 
 Phase 3 delivery and rollback exercises are verified; see [execution evidence](evidence/phase3.md). The base image has been refreshed and rescanned: 0 critical and 7 high findings remain. See [scan review](evidence/image-refresh.md) before any Phase 4 deployment.
 
+## Phase 4: AWS demonstration completed
+
+Provisioned private EKS workers with Terraform, deployed through Argo CD, verified Secrets Manager access through Pod Identity and a denied-access test, then destroyed all 34 disposable resources. AWS EKS is currently torn down; the state bucket, ECR and local kind lab are retained. See [Phase 4 evidence](evidence/phase4.md) and [recreation/teardown runbook](docs/phase4.md).
+
 ## Phase 3: release through Git
 
 The app repository verifies lint, dependencies, tests and a Docker smoke test. Only a successful main-branch build can publish its tested image to ECR using short-lived GitHub OIDC credentials. App main requires the `verify` check, including for administrators. PR builds do not publish.
