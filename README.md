@@ -1,8 +1,30 @@
-# Weather Status platform: local Kubernetes
+# Weather Status platform: Kubernetes and GitOps
 
-Phase 2 runs the existing app in a single-node kind cluster on Docker Desktop. Two replicas demonstrate pod replacement, not node-level high availability. No AWS resources are used.
+Phase 2 runs the existing app in a single-node kind cluster on Docker Desktop. Two replicas demonstrate pod replacement, not node-level high availability. Phase 3 adds GitHub Actions, AWS ECR and Argo CD. The cluster is still local; EKS and Terraform are Phase 4.
 
-## Start or redeploy
+Phase 3 delivery and rollback exercises are verified; see [execution evidence](evidence/phase3.md). The image scan found critical/high vulnerabilities requiring base-image remediation before Phase 4 deployment.
+
+## Phase 3: release through Git
+
+The app repository verifies lint, dependencies, tests and a Docker smoke test. Only a successful main-branch build can publish its tested image to ECR using short-lived GitHub OIDC credentials. App main requires the `verify` check, including for administrators. PR builds do not publish.
+
+The platform repository records the immutable image digest in `gitops/local/resources.yaml`. Merge a deployment PR, then explicitly sync that Git revision with Argo CD:
+
+```powershell
+./scripts/refresh-ecr-secret.ps1
+git pull --ff-only
+./scripts/sync-local.ps1 -Revision (git rev-parse HEAD)
+```
+
+Argo CD manages the ConfigMap, Deployment and Service. Namespace and secrets are bootstrapped separately. Sync and pruning are not automatic. Use a Git revert PR and sync its merged revision to restore a prior release; do not use `kubectl rollout undo` for GitOps rollback.
+
+Local ECR pull credentials expire after 12 hours. Run `aws login` and refresh the secret before pulling new images after expiration. Credentials pass through stdin and are never committed. This manual mechanism is for kind; EKS node IAM replaces it in Phase 4. The random mounted demo secret is not weather-provider authentication.
+
+The ECR repository has immutable tags and scan-on-push enabled. The dependency audit blocks CI; ECR findings are a separate review, not currently a release gate. ECR storage may incur charges. No EKS cluster, EC2 instance or load balancer has been created for Phase 3.
+
+For a fresh lab, run the Phase 2 bootstrap below, then `./scripts/install-argocd.ps1`, apply `argocd/project.yaml` and `argocd/application.yaml` with the explicit local kubeconfig/context, refresh the ECR secret, and sync main. Once Argo manages the app, use the GitOps path instead of the Phase 2 redeploy script. The Phase 2 fault drills mutate resources directly; they are historical exercises, not the normal release workflow.
+
+## Phase 2 bootstrap (before enabling Argo CD)
 
 From this directory in PowerShell, with Docker Desktop running:
 
@@ -28,7 +50,7 @@ The script uses the downloaded, checksum-verified kind 0.33.0 binary in `tools/k
 - Service: stable internal address and selector for ready app pods, with port 80 routed to container port 8000.
 - Resources/security: CPU and memory requests/limits, UID 10001, read-only root filesystem, no service-account token, no added Linux capabilities.
 
-The app image is loaded directly into kind and uses `imagePullPolicy: Never`. This is a local lab convenience; a missing image produces `ErrImageNeverPull`, not `ImagePullBackOff`. ECR/digest releases come later. Weather caches are per pod. Provider availability is intentionally independent of readiness.
+The app image is loaded directly into kind and uses `imagePullPolicy: Never`. This is a local lab convenience; a missing image produces `ErrImageNeverPull`, not `ImagePullBackOff`. Phase 3 uses the separate GitOps manifest with an ECR digest and IfNotPresent instead. Weather caches are per pod. Provider availability is intentionally independent of readiness.
 
 Port forwarding selects a pod; if that pod is deleted, restart the port-forward command. It does not prove Service load balancing. An internal HTTP check through the Service is required for that path.
 
