@@ -1,0 +1,2 @@
+admin_cidr = "203.0.113.10/32"
+admin_principal_arn = "arn:aws:iam::975049996360:user/REPLACE_WITH_OPERATOR"

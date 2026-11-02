@@ -5,3 +5,7 @@ tools/
 *.tfvars
 !*.tfvars.example
 evidence/*.txt
+
+*.tfplan
+*.tfplan.json
+crash.log

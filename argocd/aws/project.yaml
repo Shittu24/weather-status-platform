@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: weather
+  namespace: argocd
+spec:
+  description: Weather app resources only; namespace and secrets are bootstrapped separately.
+  sourceRepos:
+    - https://github.com/Shittu24/weather-status-platform.git
+  destinations:
+    - namespace: weather-dev
+      server: https://kubernetes.default.svc
+  namespaceResourceWhitelist:
+    - group: apps
+      kind: Deployment
+    - group: ''
+      kind: Service
+    - group: ''
+      kind: ConfigMap
+    - group: ''
+      kind: ServiceAccount
+  clusterResourceWhitelist: []
