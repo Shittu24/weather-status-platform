@@ -9,7 +9,7 @@ Terraform owns AWS resources. Argo CD owns the app's ServiceAccount, ConfigMap, 
 - One public NAT gateway supports provider calls and registry/API access. This saves a second NAT gateway's cost but is not a highly available egress design. Cross-AZ NAT traffic can incur transfer charges. A free S3 gateway endpoint handles S3 traffic.
 - EKS manages the cluster security group and node connectivity. The generated group is not a per-workload network policy. NetworkPolicy enforcement is a later exercise.
 - The node role pulls ECR images; no expiring ECR Kubernetes Secret is needed. The CNI policy remains on the node role for this lab. Workload IMDS access is constrained, and Secrets Manager access is granted only to a separate Pod Identity role.
-- EKS Pod Identity agent 1.4.1-eksbuild.3 and AWS secrets provider Helm chart 3.1.4 mount a demo value from Secrets Manager. Chart archive checksum is verified. The chart includes the Secrets Store CSI Driver.
+- EKS Pod Identity agent 1.4.1-eksbuild.3 and AWS secrets provider Helm chart 3.1.4 mount a demo value from Secrets Manager. Chart archive checksum is verified. The chart includes Secrets Store CSI Driver 1.6.1.
 - The secret value is generated in memory and sent through boto3 over TLS. Terraform manages only the secret resource, never its value. No Kubernetes Secret copy is created. It is a learning credential, not an Open-Meteo API key.
 - Existing image findings remain documented in image-refresh.md. This is a restricted, temporary portfolio lab, not a production security approval.
 

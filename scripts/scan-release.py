@@ -5,15 +5,15 @@ Requires an authenticated AWS CLI. Exits nonzero when scanning is incomplete.
 """
 import json
 import os
-from pathlib import Path
 import subprocess
 import sys
+from pathlib import Path
 
 
 def aws(*args):
     result = subprocess.run(
         ["aws", "ecr", *args, "--region", "us-east-1", "--output", "json"],
-        capture_output=True, text=True, encoding="utf-8",
+        check=False, capture_output=True, text=True, encoding="utf-8",
         env={**os.environ, "PYTHONIOENCODING": "utf-8", "AWS_CLI_OUTPUT_ENCODING": "UTF-8"},
     )
     if result.returncode:
