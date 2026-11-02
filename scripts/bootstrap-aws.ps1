@@ -28,6 +28,9 @@ $chart = '.local/secrets-store-csi-driver-provider-aws-3.1.4.tgz'
 if ((Get-FileHash $chart -Algorithm SHA256).Hash -ne '09321996A1F4902301F105C8A71913CFB2108C9397256FE8705AFBC6FFEDEE29') { throw 'CSI chart checksum changed' }
 ./tools/helm.exe upgrade --install secrets-provider $chart --namespace kube-system --kubeconfig .local/aws-kubeconfig --kube-context weather-aws --wait --timeout 5m
 Check-Native
+# EKS's prerelease version suffix can skip the chart's >=1.35 token-field gate.
+kubectl @k patch csidriver secrets-store.csi.k8s.io --type merge --patch-file kubernetes/aws-csi-driver-patch.json
+Check-Native
 $secretArn = ./tools/terraform.exe '-chdir=terraform/envs/dev' output -raw demo_secret_arn
 Check-Native
 # Secret values are generated in helper memory and sent over TLS, never Terraform.
@@ -38,7 +41,7 @@ $spc = @{
     metadata=@{name='weather-demo';namespace='weather-dev'}
     spec=@{provider='aws';parameters=@{
         region='us-east-1';usePodIdentity='true'
-        objects="- objectName: `"$secretArn`"`n  objectType: secretsmanager`n  objectAlias: demo_token`n  filePermission: `"0440`""
+        objects="- objectName: `"$secretArn`"`n  objectType: secretsmanager`n  objectAlias: demo_token`n  filePermission: `"0444`""
     }}
 }
 $spc | ConvertTo-Json -Depth 8 | kubectl @k apply -f -
